@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": false,
+        "module": "CommonJS",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "typeRoots": ["./@types", "./node_modules/@types"],
+        "outDir": "./dist"
+    }
+}
