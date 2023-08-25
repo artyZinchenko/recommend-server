@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum ReviewStatus {
+    ACTIVE
+    DELETED
+}
+
+enum Type {
+  Book
+  Movie
+  TV_Series
+  Computer_Game
+  Music_Album
+  Board_Game
+  Mobile_App
+}
+
+model Tag{
+  tag_id    Int      @id @default(autoincrement())
+  tag_name String @db.VarChar(60) @unique
+  reviews Review_Tag[]
+}
+
+model Review_Tag{
+  review    Review         @relation(fields: [reviewId], references: [review_id])
+  reviewId  String
+  tag      Tag           @relation(fields: [tagId], references: [tag_id])
+  tagId    Int
+
+  @@id([reviewId, tagId]) 
+}
+
+model User{
+  id_user String @id @default(uuid()) @db.Char(36) 
+  email String @unique
+  password     String    @db.Char(60)
+  user_status UserStatus @default(ACTIVE)
+  user_name String
+  likes Review_User[]
+  reviews Review[]
+  comments Comment[]
+  ratings Rate[]
+}
+
+model Review_User{
+  review    Review         @relation(fields: [reviewId], references: [review_id])
+  reviewId  String
+  user      User           @relation(fields: [userId], references: [id_user])
+  userId    String
+
+  @@id([reviewId, userId]) 
+}
+
+model Comment{
+  comment_id Int @id @default(autoincrement())
+  comment_text String
+  create_date  DateTime @default(now())
+  review Review @relation(fields: [reviewId], references: [review_id])
+  reviewId String
+  author User @relation(fields: [authorId], references: [id_user])
+  authorId String @unique
+}
+
+model Rate{
+  rate_id Int @id @default(autoincrement())
+  rate_number Int
+  review Review @relation(fields: [reviewId], references: [review_id])
+  reviewId String
+  author User @relation(fields: [authorId], references: [id_user])
+  authorId String @unique
+}
+
+model Review{
+    review_id String @id @default(uuid()) @db.Char(36)
+    name String @db.VarChar(60)
+    text String 
+    product String
+    type Type
+    tags Review_Tag[]
+    likes Review_User[]
+    status ReviewStatus @default(ACTIVE)
+    picture Json?
+    score Int 
+    ratings Rate[]
+    create_date DateTime @default(now())
+    author User @relation(fields: [authorId], references: [id_user])
+    authorId String 
+    comments Comment[]
+}
+
