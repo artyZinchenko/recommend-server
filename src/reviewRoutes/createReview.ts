@@ -30,7 +30,7 @@ export default route.post(
                 .json({ message: 'User is not authenticated. Please relogin' });
         }
 
-        console.log('tags', req.body.tags);
+        const filteredTags = [...new Set(req.body.tags as string[])];
 
         try {
             const newReview = await prisma.review.create({
@@ -39,11 +39,12 @@ export default route.post(
                     text: req.body.text,
                     product: req.body.productTitle,
                     type: req.body.productType,
-                    score: 10,
+                    score: req.body.rating,
                     authorId: user.id_user,
+                    picture: req.body.images,
                     tags: {
                         create: [
-                            ...req.body.tags.map((tag: string) => {
+                            ...filteredTags.map((tag: string) => {
                                 return {
                                     tag: {
                                         connectOrCreate: {
