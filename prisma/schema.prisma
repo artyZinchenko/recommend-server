@@ -25,6 +25,7 @@ enum Type {
   Music_Album
   Board_Game
   Mobile_App
+  Other
 }
 
 model Tag{
@@ -42,6 +43,11 @@ model Review_Tag{
   @@id([reviewId, tagId]) 
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User{
   id_user String @id @default(uuid()) @db.Char(36) 
   email String @unique
@@ -52,6 +58,7 @@ model User{
   reviews Review[]
   comments Comment[]
   ratings Rate[]
+  role Role @default(USER)
 }
 
 model Review_User{
@@ -91,7 +98,7 @@ model Review{
     tags Review_Tag[]
     likes Review_User[]
     status ReviewStatus @default(ACTIVE)
-    picture Json?
+    images Json?
     score Int 
     ratings Rate[]
     create_date DateTime @default(now())

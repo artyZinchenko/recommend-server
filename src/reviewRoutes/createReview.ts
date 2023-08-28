@@ -39,9 +39,9 @@ export default route.post(
                     text: req.body.text,
                     product: req.body.productTitle,
                     type: req.body.productType,
-                    score: req.body.rating,
+                    score: req.body.score,
                     authorId: user.id_user,
-                    picture: req.body.images,
+                    images: req.body.images,
                     tags: {
                         create: [
                             ...filteredTags.map((tag: string) => {
