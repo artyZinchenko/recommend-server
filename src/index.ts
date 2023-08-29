@@ -5,8 +5,9 @@ import config from './utils/config';
 import { PrismaClient } from '@prisma/client';
 import userRoutes from './userRoutes/users';
 import getUser from './middleware/getUser';
-import reviewsRoutes from './reviewRoutes/reviews';
+import reviewRoutes from './reviewRoutes/reviews';
 import exceptions from './middleware/exceptions';
+import commentRoutes from './commentRoutes/comment';
 
 const app = express();
 const server = http.createServer(app);
@@ -21,7 +22,8 @@ app.use((req, _res, next) => {
 
 app.use(getUser);
 app.use('/api/users', userRoutes);
-app.use('/api/reviews', reviewsRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/comments', commentRoutes);
 
 app.use(exceptions.unknownEndpoint);
 app.use(exceptions.errorHandling);

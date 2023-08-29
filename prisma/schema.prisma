@@ -72,12 +72,12 @@ model Review_User{
 
 model Comment{
   comment_id Int @id @default(autoincrement())
-  comment_text String
+  comment_text String @db.LongText
   create_date  DateTime @default(now())
   review Review @relation(fields: [reviewId], references: [review_id])
   reviewId String
   author User @relation(fields: [authorId], references: [id_user])
-  authorId String @unique
+  authorId String 
 }
 
 model Rate{
@@ -87,6 +87,7 @@ model Rate{
   reviewId String
   author User @relation(fields: [authorId], references: [id_user])
   authorId String @unique
+
 }
 
 model Review{
