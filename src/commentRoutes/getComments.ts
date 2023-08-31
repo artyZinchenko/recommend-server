@@ -28,8 +28,6 @@ export default route.get('/:reviewId', async (req, res) => {
         });
         if (!reviewWithComments) return [];
 
-        console.log(reviewWithComments?.comments);
-
         const comments = reviewWithComments?.comments;
         return res.status(200).json({ comments });
     } catch (error) {

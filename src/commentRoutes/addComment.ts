@@ -14,18 +14,16 @@ export default route.post(
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const message = errors.array().map((err) => err.msg);
-            console.log(message);
             return res.status(400).json({ message });
         }
 
-        const { user, prisma } = req;
+        // const socket: Socket | null = req.app.get('socket');
+        const { user, prisma, io } = req;
         if (!user || !prisma) {
             return res
                 .status(401)
                 .json({ message: 'User is not authenticated. Please relogin' });
         }
-
-        console.log(req.body.reviewId, user.id_user);
 
         try {
             const newComment = await prisma.comment.create({
@@ -42,6 +40,19 @@ export default route.post(
                     },
                 },
             });
+
+            const roomName = req.body.reviewId;
+            const room = io.sockets.adapter.rooms.get(roomName);
+
+            if (room && room.size > 0) {
+                console.log(
+                    `There are ${room.size} sockets in room ${roomName}`
+                );
+            } else {
+                console.log(`No sockets in room ${roomName}`);
+            }
+
+            io.to(req.body.reviewId).emit('commentAdded', newComment);
 
             res.status(201).json({
                 comment: newComment,
