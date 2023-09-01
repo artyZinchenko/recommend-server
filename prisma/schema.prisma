@@ -85,9 +85,10 @@ model Rate{
   rate_number Int
   review Review @relation(fields: [reviewId], references: [review_id])
   reviewId String
-  author User @relation(fields: [authorId], references: [id_user])
-  authorId String @unique
+  user User @relation(fields: [userId], references: [id_user])
+  userId String 
 
+  @@unique([reviewId, userId])
 }
 
 model Review{
@@ -106,5 +107,6 @@ model Review{
     author User @relation(fields: [authorId], references: [id_user])
     authorId String 
     comments Comment[]
+    average_rating Float    @default(0.0)
 }
 

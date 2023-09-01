@@ -41,16 +41,16 @@ export default route.post(
                 },
             });
 
-            const roomName = req.body.reviewId;
-            const room = io.sockets.adapter.rooms.get(roomName);
+            // const roomName = req.body.reviewId;
+            // const room = io.sockets.adapter.rooms.get(roomName);
 
-            if (room && room.size > 0) {
-                console.log(
-                    `There are ${room.size} sockets in room ${roomName}`
-                );
-            } else {
-                console.log(`No sockets in room ${roomName}`);
-            }
+            // if (room && room.size > 0) {
+            //     console.log(
+            //         `There are ${room.size} sockets in room ${roomName}`
+            //     );
+            // } else {
+            //     console.log(`No sockets in room ${roomName}`);
+            // }
 
             io.to(req.body.reviewId).emit('commentAdded', newComment);
 
@@ -59,7 +59,7 @@ export default route.post(
                 message: `Comment added`,
             });
         } catch (error) {
-            console.error('Error creating user:', error);
+            console.error('Error adding like:', error);
             res.status(500).json({ message: 'Internal server error' });
         } finally {
             await prisma.$disconnect();

@@ -16,6 +16,8 @@ export default route.get('/all-reviews', async (req, res) => {
                         tag: true,
                     },
                 },
+                likes: true,
+                ratings: true,
             },
         });
         res.status(200).json({ reviews });

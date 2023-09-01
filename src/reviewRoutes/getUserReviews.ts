@@ -31,8 +31,11 @@ export default route.get('/user-reviews/:userId', async (req, res) => {
                         tag: true,
                     },
                 },
+                likes: true,
+                ratings: true,
             },
         });
+
         res.status(200).json({ reviews });
     } catch (error) {
         console.error('Error fetching records:', error);

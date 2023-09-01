@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import userRoutes from './userRoutes/users';
 import getUser from './middleware/getUser';
 import reviewRoutes from './reviewRoutes/reviews';
+import feedbackRoutes from './feedbackRoute/feedback';
 import exceptions from './middleware/exceptions';
 import commentRoutes from './commentRoutes/comment';
 import { Server } from 'socket.io';
@@ -54,6 +55,7 @@ app.use(getUser);
 app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 app.use(exceptions.unknownEndpoint);
 app.use(exceptions.errorHandling);
