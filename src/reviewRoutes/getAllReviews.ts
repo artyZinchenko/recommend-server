@@ -10,6 +10,9 @@ export default route.get('/all-reviews', async (req, res) => {
 
     try {
         const reviews = await prisma.review.findMany({
+            where: {
+                status: 'ACTIVE',
+            },
             include: {
                 tags: {
                     include: {

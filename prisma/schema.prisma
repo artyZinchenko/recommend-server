@@ -48,10 +48,19 @@ enum Role {
   ADMIN
 }
 
+model UID{
+  uid String
+  user      User           @relation(fields: [userId], references: [id_user])
+  userId    String
+
+  @@id([uid, userId]) 
+}
+
 model User{
   id_user String @id @default(uuid()) @db.Char(36) 
-  email String @unique
-  password     String    @db.Char(60)
+  uids UID[]
+  email String? @unique
+  password     String?   @db.Char(60)
   user_status UserStatus @default(ACTIVE)
   user_name String
   likes Review_User[]

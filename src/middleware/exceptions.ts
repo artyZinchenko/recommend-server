@@ -31,8 +31,10 @@ const errorHandling = (
     }
 };
 
-const unknownEndpoint = (_req: Request, res: Response) => {
-    res.status(404).send({ message: 'unknown endpoint' });
+const unknownEndpoint = (req: Request, res: Response) => {
+    const endpoint = req.originalUrl;
+    console.log('Unknown endpoint', endpoint);
+    res.status(404).send({ message: `unknown endpoint: ${endpoint}` });
 };
 
 export default { errorHandling, unknownEndpoint };

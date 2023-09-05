@@ -35,11 +35,15 @@ route.use(async (req, _res, next) => {
             return;
         }
 
+        if (user.user_status === 'BLOCKED') {
+            throw new Error(`${user.user_name} is blocked`);
+        }
+
         req.user = user;
         next();
     } catch (error) {
         if (error instanceof Error) console.log(error.message);
-        next();
+        next(error);
     }
 });
 

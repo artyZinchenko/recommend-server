@@ -9,8 +9,13 @@ import reviewRoutes from './reviewRoutes/reviews';
 import feedbackRoutes from './feedbackRoute/feedback';
 import exceptions from './middleware/exceptions';
 import commentRoutes from './commentRoutes/comment';
+import adminRoutes from './adminRoutes/admin';
 import { Server } from 'socket.io';
 import { attach } from './middleware/attach';
+
+import admin, { ServiceAccount } from 'firebase-admin';
+
+import credentials from '../credentials.json';
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +33,10 @@ const io = new Server(server, {
         origin: 'http://localhost:3000',
         methods: ['GET', 'POST'],
     },
+});
+
+admin.initializeApp({
+    credential: admin.credential.cert(credentials as ServiceAccount),
 });
 
 io.on('connection', (socket) => {
@@ -56,6 +65,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(exceptions.unknownEndpoint);
 app.use(exceptions.errorHandling);

@@ -24,6 +24,7 @@ export default route.get('/user-reviews/:userId', async (req, res) => {
         const reviews = await prisma.review.findMany({
             where: {
                 authorId: requestedId,
+                status: 'ACTIVE',
             },
             include: {
                 tags: {
