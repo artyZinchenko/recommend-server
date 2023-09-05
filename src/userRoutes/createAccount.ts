@@ -4,6 +4,8 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { hashPassword } from '../utils/hashing';
+import { matchByEmail } from './utils/matchByEmail';
+import { User } from '@prisma/client';
 
 const route = express.Router();
 
@@ -17,8 +19,6 @@ export default route.post(
             .withMessage('Password must be at least 8 characters'),
     ],
     async (req: Request, res: Response) => {
-        console.log('CREATE ACC', req.body);
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const message = errors.array().map((err) => err.msg);
@@ -28,6 +28,18 @@ export default route.post(
         const prisma = req.prisma;
 
         try {
+            const matchedByEmail: User | null = await matchByEmail(
+                prisma,
+                req.body.email,
+                req.body.password
+            );
+
+            if (matchedByEmail) {
+                return res.status(201).json({
+                    message: `User with ${matchedByEmail.email} was found and updated successfully`,
+                });
+            }
+
             const newUser = await prisma.user.create({
                 data: {
                     user_name: req.body.name,
@@ -35,7 +47,8 @@ export default route.post(
                     password: await hashPassword(req.body.password),
                 },
             });
-            res.status(201).json({
+
+            return res.status(201).json({
                 message: `User ${newUser.user_name} created successfully`,
             });
         } catch (error) {

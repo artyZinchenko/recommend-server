@@ -4,7 +4,8 @@ import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 export async function matchUser(
     prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-    fbUser: DecodedIdToken
+    fbUser: DecodedIdToken,
+    emailForTwitter: string | null
 ): Promise<User> {
     let message = 'Error matching firebase user.';
     try {
@@ -20,12 +21,23 @@ export async function matchUser(
             },
         });
         if (foundUser) return foundUser;
-        if (!fbUser.email) throw new Error('No email provided');
+        console.log('fbUser', fbUser);
+        if (!fbUser.email && !emailForTwitter)
+            throw new Error('No email provided');
+
+        // this is an exception
+        // facebook provides email in verifyTokenId response while twitter does not
+        // emailForTwitter is sent from client side, which is not ideal, but I could not find another workaround
+        const email = fbUser.email
+            ? fbUser.email
+            : emailForTwitter
+            ? emailForTwitter
+            : undefined;
 
         try {
             const updatedUser = await prisma.user.update({
                 where: {
-                    email: fbUser.email,
+                    email: email,
                 },
                 data: {
                     uids: {
@@ -46,7 +58,7 @@ export async function matchUser(
                         uid: fbUser.uid,
                     },
                 },
-                email: fbUser.email,
+                email: email,
                 user_name: fbUser.name,
             },
         });
