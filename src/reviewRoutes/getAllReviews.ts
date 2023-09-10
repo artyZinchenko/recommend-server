@@ -5,7 +5,7 @@ import express from 'express';
 
 const route = express.Router();
 
-export default route.get('/all-reviews', async (req, res) => {
+export default route.get('/all-reviews', async (req, res, next) => {
     const { prisma } = req;
 
     try {
@@ -26,6 +26,7 @@ export default route.get('/all-reviews', async (req, res) => {
         res.status(200).json({ reviews });
     } catch (error) {
         console.error('Error fetching records:', error);
+        next(error);
     } finally {
         await prisma.$disconnect();
     }

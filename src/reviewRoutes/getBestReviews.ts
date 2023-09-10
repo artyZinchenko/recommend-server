@@ -5,25 +5,12 @@ import express from 'express';
 
 const route = express.Router();
 
-export default route.get('/user-reviews/:userId', async (req, res, next) => {
-    const { user, prisma } = req;
-    if (!user || !prisma) {
-        return res
-            .status(401)
-            .json({ message: 'User is not authenticated. Please relogin' });
-    }
-
-    const requestedId = req.params.userId;
-
-    if (requestedId !== user.id_user) {
-        if (user.role !== 'ADMIN')
-            return res.status(401).json({ message: 'Anauthorized' });
-    }
+export default route.get('/best-reviews', async (req, res, next) => {
+    const { prisma } = req;
 
     try {
         const reviews = await prisma.review.findMany({
             where: {
-                authorId: requestedId,
                 status: 'ACTIVE',
             },
             include: {
@@ -40,8 +27,13 @@ export default route.get('/user-reviews/:userId', async (req, res, next) => {
                 likes: true,
                 ratings: true,
             },
+            orderBy: [
+                {
+                    average_rating: 'desc',
+                },
+            ],
+            take: 5,
         });
-
         res.status(200).json({ reviews });
     } catch (error) {
         console.error('Error fetching records:', error);

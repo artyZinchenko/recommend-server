@@ -2,10 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
+import { calculateTagUsage } from '../userRoutes/utils/calculateTagUsage';
+// import { calculateTagUsage } from '../userRoutes/utils/calculateTagUsage';
 
 const route = express.Router();
 
-export default route.put('/update', async (req, res) => {
+export default route.put('/update', async (req, res, next) => {
     const { user, prisma } = req;
     if (!user || !prisma) {
         return res
@@ -21,6 +23,19 @@ export default route.put('/update', async (req, res) => {
 
     try {
         const filteredTags = [...new Set(req.body.tags as string[])];
+
+        const prevTags = await prisma.review.findUnique({
+            where: {
+                review_id: req.body.review_id,
+            },
+            select: {
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
+            },
+        });
 
         const updatedReview = await prisma.review.update({
             where: {
@@ -61,12 +76,28 @@ export default route.put('/update', async (req, res) => {
                 },
             },
         });
-        res.status(201).json({
+
+        const updatedUsage = calculateTagUsage(
+            prevTags?.tags,
+            updatedReview.tags
+        );
+
+        for (const tag of updatedUsage) {
+            await prisma.tag.update({
+                where: { tag_id: tag.id },
+                data: {
+                    usage: tag.increase ? { increment: 1 } : { decrement: 1 },
+                },
+            });
+        }
+
+        return res.status(201).json({
             review: updatedReview,
             message: `${req.body.name} updated successfully`,
         });
     } catch (error) {
         console.error('Error updating records:', error);
+        next(error);
     } finally {
         await prisma.$disconnect();
     }

@@ -14,6 +14,7 @@ export async function matchByEmail(
                 email: email,
             },
         });
+
         if (foundUser) {
             const foundPassword = foundUser.password;
             const updatedUser = await prisma.user.update({

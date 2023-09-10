@@ -4,8 +4,8 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { hashPassword } from '../utils/hashing';
-import { matchByEmail } from './utils/matchByEmail';
-import { User } from '@prisma/client';
+// import { matchByEmail } from './utils/matchByEmail';
+// import { User } from '@prisma/client';
 
 const route = express.Router();
 
@@ -28,18 +28,6 @@ export default route.post(
         const prisma = req.prisma;
 
         try {
-            const matchedByEmail: User | null = await matchByEmail(
-                prisma,
-                req.body.email,
-                req.body.password
-            );
-
-            if (matchedByEmail) {
-                return res.status(201).json({
-                    message: `User with ${matchedByEmail.email} was found and updated successfully`,
-                });
-            }
-
             const newUser = await prisma.user.create({
                 data: {
                     user_name: req.body.name,

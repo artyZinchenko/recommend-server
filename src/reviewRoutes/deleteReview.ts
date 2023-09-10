@@ -5,7 +5,7 @@ import express from 'express';
 
 const route = express.Router();
 
-export default route.put('/delete-review/:reviewId', async (req, res) => {
+export default route.put('/delete-review/:reviewId', async (req, res, next) => {
     const reviewId = req.params.reviewId;
     const { user, prisma } = req;
 
@@ -23,13 +23,35 @@ export default route.put('/delete-review/:reviewId', async (req, res) => {
             data: {
                 status: 'DELETED',
             },
+            include: {
+                tags: {
+                    include: {
+                        tag: true,
+                    },
+                },
+            },
         });
+
         res.status(201).json({
             review: updatedReview,
             message: `${updatedReview.name} deleted successfully`,
         });
+
+        for (const tag of updatedReview.tags) {
+            await prisma.tag.update({
+                where: {
+                    tag_id: tag.tagId,
+                },
+                data: {
+                    usage: {
+                        decrement: 1,
+                    },
+                },
+            });
+        }
     } catch (error) {
         console.error('Error deleting records:', error);
+        next(error);
     } finally {
         await prisma.$disconnect();
     }

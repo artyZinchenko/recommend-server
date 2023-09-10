@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
+import { incrementTagUsage } from '../userRoutes/utils/incrementTagUsage';
 
 const route = express.Router();
 
@@ -33,6 +34,8 @@ export default route.post(
         const filteredTags = [...new Set(req.body.tags as string[])];
 
         try {
+            await incrementTagUsage(prisma, filteredTags);
+
             const newReview = await prisma.review.create({
                 data: {
                     name: req.body.name,

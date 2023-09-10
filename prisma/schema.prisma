@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
+
 
 datasource db {
   provider = "mysql"
@@ -31,7 +33,10 @@ enum Type {
 model Tag{
   tag_id    Int      @id @default(autoincrement())
   tag_name String @db.VarChar(60) @unique
+  usage Int @default(1)
   reviews Review_Tag[]
+
+  @@fulltext([tag_name])
 }
 
 model Review_Tag{
@@ -55,7 +60,7 @@ model UID{
 
   @@id([uid, userId]) 
 }
-
+  
 model User{
   id_user String @id @default(uuid()) @db.Char(36) 
   uids UID[]
@@ -68,8 +73,10 @@ model User{
   comments Comment[]
   ratings Rate[]
   role Role @default(USER)
-}
 
+   @@fulltext([user_name])
+}
+ 
 model Review_User{
   review    Review         @relation(fields: [reviewId], references: [review_id])
   reviewId  String
@@ -87,6 +94,8 @@ model Comment{
   reviewId String
   author User @relation(fields: [authorId], references: [id_user])
   authorId String 
+
+   @@fulltext([comment_text])
 }
 
 model Rate{
@@ -117,5 +126,7 @@ model Review{
     authorId String 
     comments Comment[]
     average_rating Float    @default(0.0)
+
+    @@fulltext([name, text, product])
 }
 
