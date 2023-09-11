@@ -5,6 +5,7 @@ import express from 'express';
 import { getReviewsByAuthors } from './utils/getReviewsByAuthors';
 import { getReviewsByTags } from './utils/getReviewsByTags';
 import { getReviewsByComments } from './utils/getReviewsByComments';
+import { filterResult } from './utils/filterResult';
 
 const route = express.Router();
 
@@ -76,8 +77,9 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
             ...reviewsByComments,
         ];
 
-        console.log(result);
-        res.status(200).json({ reviews: result });
+        const filteredResult = filterResult(result);
+
+        res.status(200).json({ reviews: filteredResult });
     } catch (error) {
         console.error('Error fetching records:', error);
         next(error);
