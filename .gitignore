@@ -4,4 +4,3 @@
 /dist
 .env.development
 .env.production
-credentials.json
