@@ -7,7 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "cross-env NODE_ENV=production node ./dist/src/index.js",
         "build": "tsc",
-        "postinstall": "npx prisma generate",
+        "postinstall": "npx prisma generate --schema=./src/prisma/schema.prisma",
         "lint": "eslint './src/**/*.{ts,tsx}",
         "dev": "cross-env NODE_ENV=development ts-node-dev ./src/index.ts"
     },
