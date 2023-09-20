@@ -12,9 +12,7 @@ import commentRoutes from './commentRoutes/comment';
 import adminRoutes from './adminRoutes/admin';
 import { Server } from 'socket.io';
 import { attach } from './middleware/attach';
-
 import admin, { ServiceAccount } from 'firebase-admin';
-
 import credentials from '../credentials.json';
 
 const app = express();
@@ -30,7 +28,7 @@ app.use((req, _res, next) => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: 'https://recommend-client.firebaseapp.com/',
         methods: ['GET', 'POST'],
     },
 });
@@ -43,18 +41,14 @@ io.on('connection', (socket) => {
     console.log('connect');
 
     socket.on('joinReview', (reviewId) => {
-        console.log('join review', socket.id);
-        console.log(reviewId);
         socket.join(reviewId);
         app.set('socket', socket);
     });
     socket.on('leaveReview', (reviewId) => {
-        console.log('leave review', reviewId);
         socket.leave(reviewId);
         app.set('socket', socket);
     });
     socket.on('disconnect', function () {
-        console.log('Got disconnect!');
         app.set('socket', null);
     });
 });
@@ -71,5 +65,5 @@ app.use(exceptions.unknownEndpoint);
 app.use(exceptions.errorHandling);
 
 server.listen(config.PORT, () => {
-    console.log(`Chat-server listening at http://localhost:${config.PORT}`);
+    console.log(`Server listening at http://localhost:${config.PORT}`);
 });

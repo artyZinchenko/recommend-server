@@ -6,7 +6,6 @@ import express from 'express';
 const route = express.Router();
 
 export default route.get('/:reviewId', async (req, res) => {
-    console.log('fetch comments');
     const { prisma } = req;
     const reviewId = req.params.reviewId;
 

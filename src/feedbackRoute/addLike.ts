@@ -6,8 +6,6 @@ import express, { Request, Response } from 'express';
 const route = express.Router();
 
 export default route.post('/add-like', async (req: Request, res: Response) => {
-    console.log('new like');
-
     const { user, prisma } = req;
     const { reviewId, userId } = req.body;
 
@@ -30,8 +28,6 @@ export default route.post('/add-like', async (req: Request, res: Response) => {
                 userId: userId,
             },
         });
-
-        console.log('Like added:', newLike);
 
         res.status(201).json({
             like: newLike,

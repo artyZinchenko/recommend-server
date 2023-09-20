@@ -4,25 +4,26 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { hashPassword } from '../utils/hashing';
-// import { matchByEmail } from './utils/matchByEmail';
-// import { User } from '@prisma/client';
 
 const route = express.Router();
 
 export default route.post(
     '/create-account',
     [
-        body('name').notEmpty().withMessage('Empty username'),
-        body('email').isEmail().withMessage('Invalid email format'),
+        body('name')
+            .notEmpty()
+            .withMessage('notification.error.empty.empty_username'),
+        body('email')
+            .isEmail()
+            .withMessage('notification.error.empty.empty_email'),
         body('password')
             .isLength({ min: 8 })
-            .withMessage('Password must be at least 8 characters'),
+            .withMessage('notification.error.empty.empty_password'),
     ],
     async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const message = errors.array().map((err) => err.msg);
-            console.log(message);
             return res.status(400).json({ message });
         }
         const prisma = req.prisma;

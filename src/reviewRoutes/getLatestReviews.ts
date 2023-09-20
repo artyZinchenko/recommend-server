@@ -7,7 +7,6 @@ const route = express.Router();
 
 export default route.get('/latest-reviews', async (req, res, next) => {
     const { prisma } = req;
-    console.log('LATES');
 
     try {
         const reviews = await prisma.review.findMany({
@@ -26,14 +25,17 @@ export default route.get('/latest-reviews', async (req, res, next) => {
                     },
                 },
                 likes: true,
-                ratings: true,
+                product: {
+                    include: {
+                        ratings: true,
+                    },
+                },
             },
             orderBy: [
                 {
                     create_date: 'desc',
                 },
             ],
-            take: 5,
         });
         res.status(200).json({ reviews });
     } catch (error) {

@@ -5,13 +5,15 @@ import express from 'express';
 
 const route = express.Router();
 
-export default route.get('/all-reviews', async (req, res, next) => {
+export default route.get('/reviewById/:id', async (req, res, next) => {
     const { prisma } = req;
+    const id = req.params.id;
 
     try {
-        const reviews = await prisma.review.findMany({
+        const review = await prisma.review.findUnique({
             where: {
                 status: 'ACTIVE',
+                review_id: id,
             },
             include: {
                 tags: {
@@ -19,11 +21,21 @@ export default route.get('/all-reviews', async (req, res, next) => {
                         tag: true,
                     },
                 },
+                author: {
+                    select: {
+                        user_name: true,
+                    },
+                },
                 likes: true,
-                ratings: true,
+                product: {
+                    include: {
+                        ratings: true,
+                    },
+                },
             },
         });
-        res.status(200).json({ reviews });
+
+        res.status(200).json({ review });
     } catch (error) {
         console.error('Error fetching records:', error);
         next(error);

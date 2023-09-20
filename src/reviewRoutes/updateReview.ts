@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 import { calculateTagUsage } from '../userRoutes/utils/calculateTagUsage';
-// import { calculateTagUsage } from '../userRoutes/utils/calculateTagUsage';
 
 const route = express.Router();
 
@@ -14,7 +13,6 @@ export default route.put('/update', async (req, res, next) => {
             .status(401)
             .json({ message: 'User is not authenticated. Please relogin' });
     }
-    console.log(req.body.authorId, user.id_user);
 
     if (user.id_user !== req.body.authorId) {
         if (user.role !== 'ADMIN')
@@ -44,8 +42,6 @@ export default route.put('/update', async (req, res, next) => {
             data: {
                 name: req.body.name,
                 text: req.body.text,
-                product: req.body.productTitle,
-                type: req.body.productType,
                 score: req.body.score,
                 images: req.body.images,
                 tags: {

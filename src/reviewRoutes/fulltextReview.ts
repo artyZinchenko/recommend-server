@@ -6,13 +6,13 @@ import { getReviewsByAuthors } from './utils/getReviewsByAuthors';
 import { getReviewsByTags } from './utils/getReviewsByTags';
 import { getReviewsByComments } from './utils/getReviewsByComments';
 import { filterResult } from './utils/filterResult';
+import { getReviewsByProducts } from './utils/getReviewsByProducts';
 
 const route = express.Router();
 
 export default route.get('/fulltext/:query', async (req, res, next) => {
     const { prisma } = req;
     const query = req.params.query;
-    console.log('fulltext', query);
 
     try {
         const reviews = await prisma.review.findMany({
@@ -24,9 +24,6 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
                 text: {
                     search: query,
                 },
-                product: {
-                    search: query,
-                },
             },
             include: {
                 tags: {
@@ -35,7 +32,7 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
                     },
                 },
                 likes: true,
-                ratings: true,
+                product: true,
                 author: {
                     select: {
                         user_name: true,
@@ -51,14 +48,14 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
                 },
             },
         });
-        const tags = await await prisma.tag.findMany({
+        const tags = await prisma.tag.findMany({
             where: {
                 tag_name: {
                     search: query,
                 },
             },
         });
-        const comments = await await prisma.comment.findMany({
+        const comments = await prisma.comment.findMany({
             where: {
                 comment_text: {
                     search: query,
@@ -66,6 +63,15 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
             },
         });
 
+        const products = await prisma.product.findMany({
+            where: {
+                product_name: {
+                    search: query,
+                },
+            },
+        });
+
+        const reviewsByProducts = await getReviewsByProducts(products, prisma);
         const reviewsByAuthors = await getReviewsByAuthors(authors, prisma);
         const reviewsByTags = await getReviewsByTags(tags, prisma);
         const reviewsByComments = await getReviewsByComments(comments, prisma);
@@ -75,6 +81,7 @@ export default route.get('/fulltext/:query', async (req, res, next) => {
             ...reviewsByAuthors,
             ...reviewsByTags,
             ...reviewsByComments,
+            ...reviewsByProducts,
         ];
 
         const filteredResult = filterResult(result);

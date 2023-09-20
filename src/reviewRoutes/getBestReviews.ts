@@ -25,14 +25,19 @@ export default route.get('/best-reviews', async (req, res, next) => {
                     },
                 },
                 likes: true,
-                ratings: true,
+                product: {
+                    include: {
+                        ratings: true,
+                    },
+                },
             },
             orderBy: [
                 {
-                    average_rating: 'desc',
+                    product: {
+                        average_rating: 'desc',
+                    },
                 },
             ],
-            take: 5,
         });
         res.status(200).json({ reviews });
     } catch (error) {

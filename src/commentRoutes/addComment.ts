@@ -10,14 +10,12 @@ export default route.post(
     '/add-comment',
     [body('text').notEmpty().withMessage('No comment text')],
     async (req: Request, res: Response) => {
-        console.log('new comment');
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const message = errors.array().map((err) => err.msg);
             return res.status(400).json({ message });
         }
 
-        // const socket: Socket | null = req.app.get('socket');
         const { user, prisma, io } = req;
         if (!user || !prisma) {
             return res
@@ -40,17 +38,6 @@ export default route.post(
                     },
                 },
             });
-
-            // const roomName = req.body.reviewId;
-            // const room = io.sockets.adapter.rooms.get(roomName);
-
-            // if (room && room.size > 0) {
-            //     console.log(
-            //         `There are ${room.size} sockets in room ${roomName}`
-            //     );
-            // } else {
-            //     console.log(`No sockets in room ${roomName}`);
-            // }
 
             io.to(req.body.reviewId).emit('commentAdded', newComment);
 

@@ -8,8 +8,6 @@ const route = express.Router();
 export default route.post(
     '/add-rating',
     async (req: Request, res: Response) => {
-        console.log('new rating');
-
         const { user, prisma } = req;
 
         if (!user || !prisma) {
@@ -28,14 +26,14 @@ export default route.post(
             const newRating = await prisma.rate.create({
                 data: {
                     rate_number: req.body.rating,
-                    reviewId: req.body.reviewId,
+                    productId: req.body.productId,
                     userId: req.body.userId,
                 },
             });
 
-            const total = await prisma.review.findUnique({
+            const total = await prisma.product.findUnique({
                 where: {
-                    review_id: req.body.reviewId,
+                    product_id: req.body.productId,
                 },
                 select: {
                     ratings: true,
@@ -51,9 +49,9 @@ export default route.post(
                     (totalValues + req.body.rating) /
                     (total.ratings.length + 1);
 
-                await prisma.review.update({
+                await prisma.product.update({
                     where: {
-                        review_id: req.body.reviewId,
+                        product_id: req.body.productId,
                     },
                     data: {
                         average_rating: newAverage,
@@ -61,14 +59,12 @@ export default route.post(
                 });
             }
 
-            console.log('Rating added:', newRating);
-
             res.status(201).json({
                 rating: newRating,
                 message: `Rating added`,
             });
         } catch (error) {
-            console.error('Error processing like:', error);
+            console.error('Error processing rating:', error);
             res.status(500).json({ message: 'Internal server error' });
         } finally {
             await prisma.$disconnect();

@@ -99,34 +99,42 @@ model Comment{
 }
 
 model Rate{
-  rate_id Int @id @default(autoincrement())
   rate_number Int
-  review Review @relation(fields: [reviewId], references: [review_id])
-  reviewId String
+  product Product @relation(fields: [productId], references: [product_id])
+  productId Int 
   user User @relation(fields: [userId], references: [id_user])
   userId String 
 
-  @@unique([reviewId, userId])
+  @@id([ productId, userId])
+}
+
+model Product {
+  product_id Int @id @default(autoincrement())
+  product_name String @db.VarChar(60)
+  product_reviews Review[]
+  ratings Rate[]
+  type Type
+  average_rating Float    @default(0.0)
+
+  @@fulltext([product_name])
 }
 
 model Review{
     review_id String @id @default(uuid()) @db.Char(36)
     name String @db.VarChar(60)
     text String @db.LongText
-    product String
-    type Type
+    product Product @relation(fields: [productId], references: [product_id])
+    productId Int 
     tags Review_Tag[]
     likes Review_User[]
     status ReviewStatus @default(ACTIVE)
     images Json?
     score Int 
-    ratings Rate[]
     create_date DateTime @default(now())
     author User @relation(fields: [authorId], references: [id_user])
     authorId String 
     comments Comment[]
-    average_rating Float    @default(0.0)
 
-    @@fulltext([name, text, product])
+    @@fulltext([name, text])
 }
 

@@ -12,7 +12,7 @@ export default route.put('/delete-review/:reviewId', async (req, res, next) => {
     if (!user || !prisma) {
         return res
             .status(401)
-            .json({ message: 'User is not authenticated. Please relogin' });
+            .json({ message: 'notification.error.user_notFound' });
     }
 
     try {
@@ -34,7 +34,7 @@ export default route.put('/delete-review/:reviewId', async (req, res, next) => {
 
         res.status(201).json({
             review: updatedReview,
-            message: `${updatedReview.name} deleted successfully`,
+            message: `create.deleted`,
         });
 
         for (const tag of updatedReview.tags) {

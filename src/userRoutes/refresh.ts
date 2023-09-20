@@ -9,7 +9,9 @@ export default route.get('/refresh', async (req: Request, res: Response) => {
     const user = req.user;
 
     if (!user) {
-        return res.status(404).json({ message: 'User not fround' });
+        return res
+            .status(404)
+            .json({ message: 'notification.error.login.not_found' });
     }
 
     return res

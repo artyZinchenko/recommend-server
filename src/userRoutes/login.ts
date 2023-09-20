@@ -16,7 +16,9 @@ export default route.post('/login', async (req: Request, res: Response) => {
     });
 
     if (!foundUser) {
-        return res.status(404).json({ message: 'User not fround' });
+        return res
+            .status(404)
+            .json({ message: 'notification.error.login.not_found' });
     }
 
     const passwordMatch = await comparePasswords(
@@ -25,11 +27,15 @@ export default route.post('/login', async (req: Request, res: Response) => {
     );
 
     if (!passwordMatch) {
-        return res.status(401).json({ message: 'Wrong password' });
+        return res
+            .status(401)
+            .json({ message: 'notification.error.login.password' });
     }
 
     if (foundUser.user_status === 'BLOCKED') {
-        return res.status(403).json({ message: 'User is blocked' });
+        return res
+            .status(403)
+            .json({ message: 'notification.error.login.blocked' });
     }
 
     const token = jwt.sign(

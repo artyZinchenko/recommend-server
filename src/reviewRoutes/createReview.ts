@@ -4,23 +4,30 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { incrementTagUsage } from '../userRoutes/utils/incrementTagUsage';
+import { getProductId } from './utils/getProductId';
 
 const route = express.Router();
 
 export default route.post(
     '/create',
     [
-        body('name').notEmpty().withMessage('Empty review name'),
-        body('productTitle').notEmpty().withMessage('Empty product name'),
-        body('text').notEmpty().withMessage('No review text'),
-        body('productType').notEmpty().withMessage('No product type'),
+        body('name')
+            .notEmpty()
+            .withMessage('notification.error.empty.empty_name'),
+        body('product.product_name')
+            .notEmpty()
+            .withMessage('notification.error.empty.empty_product_name'),
+        body('text')
+            .notEmpty()
+            .withMessage('notification.error.empty.empty_text'),
+        body('product.type')
+            .notEmpty()
+            .withMessage('notification.error.empty.empty_type'),
     ],
     async (req: Request, res: Response) => {
-        console.log('new review');
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const message = errors.array().map((err) => err.msg);
-            console.log(message);
             return res.status(400).json({ message });
         }
 
@@ -28,7 +35,7 @@ export default route.post(
         if (!user || !prisma) {
             return res
                 .status(401)
-                .json({ message: 'User is not authenticated. Please relogin' });
+                .json({ message: 'notification.error.user_notFound' });
         }
 
         const filteredTags = [...new Set(req.body.tags as string[])];
@@ -36,15 +43,18 @@ export default route.post(
         try {
             await incrementTagUsage(prisma, filteredTags);
 
+            const product = req.body.product;
+            const product_id = await getProductId(prisma, product);
+            if (!product_id) throw new Error();
+
             const newReview = await prisma.review.create({
                 data: {
                     name: req.body.name,
                     text: req.body.text,
-                    product: req.body.productTitle,
-                    type: req.body.productType,
                     score: req.body.score,
                     authorId: user.id_user,
                     images: req.body.images,
+                    productId: product_id,
                     tags: {
                         create: [
                             ...filteredTags.map((tag: string) => {

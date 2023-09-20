@@ -20,11 +20,12 @@ export default route.post(
         try {
             const fbUser = await getUser(firebaseToken, uid);
 
-            console.log('fbUser', fbUser);
             const foundUser = await matchUser(prisma, fbUser, emailForTwitter);
 
             if (foundUser.user_status === 'BLOCKED') {
-                return res.status(403).json({ message: 'User is blocked' });
+                return res
+                    .status(403)
+                    .json({ message: 'notification.error.login.not_found' });
             }
 
             const signedToken = jwt.sign(
@@ -33,7 +34,6 @@ export default route.post(
             );
 
             const user = { ...foundUser, password: null };
-            console.log('success', user);
 
             return res.status(201).json({
                 message: `${user.user_name} signed in`,

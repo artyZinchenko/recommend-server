@@ -38,7 +38,11 @@ export default route.get('/user-reviews/:userId', async (req, res, next) => {
                     },
                 },
                 likes: true,
-                ratings: true,
+                product: {
+                    include: {
+                        ratings: true,
+                    },
+                },
             },
         });
 

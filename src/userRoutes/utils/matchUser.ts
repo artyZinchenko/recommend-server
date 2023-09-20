@@ -21,7 +21,6 @@ export async function matchUser(
             },
         });
         if (foundUser) return foundUser;
-        console.log('fbUser', fbUser);
         if (!fbUser.email && !emailForTwitter)
             throw new Error('No email provided');
 

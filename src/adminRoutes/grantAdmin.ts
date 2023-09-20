@@ -10,7 +10,6 @@ export default route.put('/grant-admin', async (req, res) => {
     if (!user || !prisma) {
         return res.status(401).json({ message: 'User not found, relogin.' });
     }
-    console.log('userrr', req.body.user);
 
     if (user.role !== 'ADMIN')
         return res.status(401).json({ message: 'Sign in as admin' });

@@ -17,6 +17,7 @@ export async function getReviewsByTags(
                             },
                         },
                     },
+                    status: 'ACTIVE',
                 },
                 include: {
                     tags: {
@@ -25,7 +26,11 @@ export async function getReviewsByTags(
                         },
                     },
                     likes: true,
-                    ratings: true,
+                    product: {
+                        include: {
+                            ratings: true,
+                        },
+                    },
                     author: {
                         select: {
                             user_name: true,

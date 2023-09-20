@@ -15,6 +15,7 @@ export async function getReviewsByComments(
                             comment_text: comment.comment_text,
                         },
                     },
+                    status: 'ACTIVE',
                 },
                 include: {
                     tags: {
@@ -23,7 +24,11 @@ export async function getReviewsByComments(
                         },
                     },
                     likes: true,
-                    ratings: true,
+                    product: {
+                        include: {
+                            ratings: true,
+                        },
+                    },
                     author: {
                         select: {
                             user_name: true,

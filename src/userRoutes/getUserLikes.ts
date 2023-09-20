@@ -27,7 +27,6 @@ export default route.get(
                 0
             );
 
-            console.log(likesNumber);
             return res.status(201).json({ total_likes: likesNumber });
         } catch (error) {
             console.error('Error fetching records:', error);

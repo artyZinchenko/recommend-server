@@ -5,7 +5,7 @@ import express from 'express';
 
 const route = express.Router();
 
-export default route.get('/:tagName', async (req, res, next) => {
+export default route.get('/tagName/:tagName', async (req, res, next) => {
     const { prisma } = req;
     const tagName = req.params.tagName;
 
@@ -33,11 +33,17 @@ export default route.get('/:tagName', async (req, res, next) => {
                     },
                 },
                 likes: true,
-                ratings: true,
+                product: {
+                    include: {
+                        ratings: true,
+                    },
+                },
             },
             orderBy: [
                 {
-                    average_rating: 'desc',
+                    product: {
+                        average_rating: 'desc',
+                    },
                 },
             ],
         });

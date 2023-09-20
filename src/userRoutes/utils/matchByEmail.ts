@@ -8,7 +8,6 @@ export async function matchByEmail(
     password: string
 ) {
     try {
-        console.log('match', email, password);
         const foundUser = await prisma.user.findUnique({
             where: {
                 email: email,
