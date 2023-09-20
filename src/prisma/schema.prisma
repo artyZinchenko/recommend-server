@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -35,7 +35,7 @@ model Tag{
   usage Int @default(1)
   reviews Review_Tag[]
 
-  // @@fulltext([tag_name])
+  @@fulltext([tag_name])
 }
 
 model Review_Tag{
@@ -73,7 +73,7 @@ model User{
   ratings Rate[]
   role Role @default(USER)
 
-  //  @@fulltext([user_name])
+   @@fulltext([user_name])
 }
  
 model Review_User{
@@ -94,7 +94,7 @@ model Comment{
   author User @relation(fields: [authorId], references: [id_user])
   authorId String 
 
-  //  @@fulltext([comment_text])
+   @@fulltext([comment_text])
 }
 
 model Rate{
@@ -115,7 +115,7 @@ model Product {
   type Type
   average_rating Float    @default(0.0)
 
-  // @@fulltext([product_name])
+  @@fulltext([product_name])
 }
 
 model Review{
@@ -134,6 +134,6 @@ model Review{
     authorId String 
     comments Comment[]
 
-    // @@fulltext([name, text])
+    @@fulltext([name, text])
 }
 

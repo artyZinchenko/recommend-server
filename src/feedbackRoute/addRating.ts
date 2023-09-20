@@ -42,7 +42,7 @@ export default route.post(
 
             if (total?.ratings) {
                 const totalValues = total.ratings.reduce(
-                    (sum, rating) => sum + rating.rate_number,
+                    (sum: number, rating) => sum + rating.rate_number,
                     0
                 );
                 const newAverage =
