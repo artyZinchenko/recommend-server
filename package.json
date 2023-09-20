@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "cross-env NODE_ENV=production node ./dist/src/index.js",
-        "build": "npm install @prisma/client && tsc",
+        "build": "tsc",
+        "postinstall": "npm add -D prisma",
         "lint": "eslint './src/**/*.{ts,tsx}",
         "dev": "cross-env NODE_ENV=development ts-node-dev ./src/index.ts"
     },
