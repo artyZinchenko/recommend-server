@@ -36,7 +36,6 @@
         "@typescript-eslint/parser": "^6.4.0",
         "cross-env": "^7.0.3",
         "eslint": "^8.47.0",
-        "prisma": "^5.3.1",
         "ts-node-dev": "^2.0.0"
     }
 }
