@@ -14,6 +14,7 @@ import { Server } from 'socket.io';
 import { attach } from './middleware/attach';
 import admin, { ServiceAccount } from 'firebase-admin';
 import credentials from '../credentials.json';
+import wakeup from './utils/wakeup';
 
 const app = express();
 const server = http.createServer(app);
@@ -60,6 +61,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/wakeup', wakeup);
 
 app.use(exceptions.unknownEndpoint);
 app.use(exceptions.errorHandling);

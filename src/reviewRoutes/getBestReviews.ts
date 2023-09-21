@@ -38,6 +38,7 @@ export default route.get('/best-reviews', async (req, res, next) => {
                     },
                 },
             ],
+            take: 5,
         });
         res.status(200).json({ reviews });
     } catch (error) {
