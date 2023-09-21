@@ -28,7 +28,7 @@ app.use((req, _res, next) => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'https://recommend-client.firebaseapp.com/',
+        origin: 'https://recommend-client.web.app',
         methods: ['GET', 'POST'],
     },
 });
